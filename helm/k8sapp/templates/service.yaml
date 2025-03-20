@@ -11,6 +11,7 @@ spec:
     - name: {{ .name }}
       targetPort: {{ .targetPort }}
       protocol: {{ .protocol }}
+      port: {{ .port }}
     {{- end }}
   selector:
     {{- include "k8sapp.selectorLabels" . | nindent 4 }}

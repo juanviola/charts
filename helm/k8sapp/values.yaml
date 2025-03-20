@@ -45,9 +45,11 @@ service:
     - name: http
       protocol: TCP
       targetPort: 80
+      port: 80
     - name: https
       protocol: TCP
       targetPort: 443
+      port: 443
 
 ingress:
   enabled: false
