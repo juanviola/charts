@@ -3,12 +3,12 @@ entries:
   k8sapp:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-03-20T17:42:42.330716371Z"
+    created: "2025-03-20T18:16:14.423987361Z"
     description: A Helm chart for deploying applications in Kubernetes
-    digest: d168c49d2fbea07e41702cb830a31bd5634c6ea9438f8ef4da1afe2716ef3610
+    digest: 850ef87af5fa22e7f5cd5ec3815293a24b42045bd6000c240955770ed11c7823
     name: k8sapp
     type: application
     urls:
-    - https://juanviola.github.io/charts/stable/k8sapp-0.1.0.tgz
-    version: 0.1.0
-generated: "2025-03-20T17:42:42.330158842Z"
+    - https://juanviola.github.io/charts/stable/k8sapp-0.1.1.tgz
+    version: 0.1.1
+generated: "2025-03-20T18:16:14.423395449Z"
