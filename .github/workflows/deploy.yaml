@@ -15,19 +15,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          persistent-credentials: false
+          persist-credentials: false
 
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
           version: v3.12.0
 
-      - name: Deploy Helm chart
+      - name: Package all Helm charts
         run: |
-          mkdir -p helm_output  # save Helm output directory
-          helm dependency update helm/k8sapp
-          helm package helm/k8sapp --destination helm_output
-          helm repo index helm_output --url https://juanviola.github.io/charts/stable
+          mkdir -p helm_output
+            
+          # loop through all charts
+          for chart in helm/*; do
+            if [ -d "$chart" ]; then
+              helm dependency update "$chart"
+              helm package "$chart" --destination helm_output
+            fi
+          done
+
+          # regenerate index.yaml
+          helm repo index helm_output --url https://juanviola.github.io/charts/stable --merge helm_output/index.yaml
 
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
