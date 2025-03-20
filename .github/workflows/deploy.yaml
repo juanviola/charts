@@ -35,3 +35,4 @@ jobs:
           clean: true
           commit-message: "Update helm-deploy from main"
           filter: '*.tgz,index.yaml' # only copy the index file and the chart tarball
+          token: ${{ secrets.GH_PAGES_TOKEN }}
