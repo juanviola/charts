@@ -22,17 +22,17 @@ jobs:
 
       - name: Deploy Helm chart
         run: |
+          mkdir -p helm_output  # save Helm output directory
           helm dependency update helm/k8sapp
-          helm package helm/k8sapp --destination .
-          helm repo index . --url https://juanviola.github.io/charts/stable
+          helm package helm/k8sapp --destination helm_output
+          helm repo index helm_output --url https://juanviola.github.io/charts/stable
 
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: .
+          folder: helm_output
           target-folder: stable
           clean: true
           commit-message: "Update helm-deploy from main"
-          filter: '*.tgz,index.yaml' # only copy the index file and the chart tarball
           token: ${{ secrets.GH_PAGES_TOKEN }}
