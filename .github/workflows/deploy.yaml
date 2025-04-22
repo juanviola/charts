@@ -43,6 +43,6 @@ jobs:
           branch: gh-pages
           folder: helm_output
           target-folder: stable
-          clean: true
+          clean: false
           commit-message: "Update helm-deploy from main"
           token: ${{ secrets.GH_PAGES_TOKEN }}

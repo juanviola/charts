@@ -1,0 +1,77 @@
+{{- if .Values.engine.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vortex.fullname" . }}-engine
+  labels:
+    {{- include "vortex.labels" . | nindent 4 }}
+    {{- include "vortex.engine.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.engine.autoscaling.enabled }}
+  replicas: {{ .Values.engine.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "vortex.selectorLabels" . | nindent 6 }}
+      {{- include "vortex.engine.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "vortex.labels" . | nindent 8 }}
+        {{- include "vortex.engine.labels" . | nindent 8 }}
+	{{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "vortex.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-engine
+          securityContext:
+            {{- toYaml .Values.engine.securityContext | nindent 12 }}
+          image: "{{ .Values.engine.image.repository }}:{{ .Values.engine.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.engine.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.engine.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.engine.resources | nindent 12 }}
+          {{- with .Values.engine.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.engine.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.engine.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.engine.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.engine.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
