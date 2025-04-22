@@ -2,7 +2,9 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: acr-secret
+
 nameOverride: ""
 fullnameOverride: ""
 
@@ -55,6 +57,7 @@ engine:
     repository: vortexio.azurecr.io/vortex/engine
     tag: develop
     pullPolicy: IfNotPresent
+
   service:
     port: 8080
 
