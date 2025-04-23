@@ -56,7 +56,7 @@ engine:
   image:
     repository: vortexio.azurecr.io/vortex/engine
     tag: develop
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
 
   service:
     port: 8080
