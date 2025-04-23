@@ -8,10 +8,10 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     {{- range .Values.service.ports }}
-    - name: {{ .name }}
-      targetPort: {{ .targetPort }}
-      protocol: {{ .protocol }}
-      port: {{ .port }}
+    - name: {{ .name | default "http" }}
+      targetPort: {{ .targetPort | default 80 }}
+      protocol: {{ .protocol | default "TCP" }}
+      port: {{ .port | default 80 }}
     {{- end }}
   selector:
     {{- include "k8sapp.selectorLabels" . | nindent 4 }}

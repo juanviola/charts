@@ -64,6 +64,17 @@ engine:
   env:
     V12_HTTP_SERVER_HOST: localhost
     V12_CLUSTER_HOST: localhost
+    V12_SLICK_URL: "jdbc:mysql://<HOST>:3306/<DB>?cachePrepStmts=true&cacheCallableStmts=true&cacheServerConfiguration=true&useLocalSessionState=true&elideSetAutoCommits=true&alwaysSendSetIsolation=false&enableQueryTimeouts=false&connectionAttributes=none&verifyServerCertificate=false&useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&useLegacyDatetimeCode=false&serverTimezone=UTC&rewriteBatchedStatements=true"
+    V12_SLICK_USER: root
+    V12_SLICK_PASSWORD: mypass
+    V12_REDISRW_HOSTNAME: redis://<HOSTNAME>
+    V12_REDISRW_PORT: 6379
+    V12_CLUSTER_PORT: 2552
+    V12_CLUSTER_ROLE: seed
+    # V12_CLUSTER_HOST: engine-1
+    # V12_CLUSTER_NODES_0: "akka://V12System@engine-1:2552"
+    # V12_CLUSTER_NODES_1: "akka://V12System@engine-2:2552"
+    # V12_CLUSTER_NODES_2: "akka://V12System@engine-3:2552"
 
   securityContext: {}
     # capabilities:

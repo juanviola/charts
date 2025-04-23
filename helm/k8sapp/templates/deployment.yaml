@@ -36,25 +36,63 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Release.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          {{- if .Values.command }}
+          command:
+            {{- range .Values.command }}
+            - {{ . | quote }}
+            {{- end }}
+          {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.env }}
+          env:
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.envFrom }}
+          envFrom:
+            {{- range .Values.envFrom }}
+            {{- if .configMapRef }}
+            - configMapRef:
+                name: {{ .configMapRef.name | quote }}
+                {{- if .configMapRef.optional }}
+                optional: {{ .configMapRef.optional }}
+                {{- end }}
+                {{- if .prefix }}
+            prefix: {{ .prefix | quote }}
+                {{- end }}
+            {{- end }}
+            {{- if .secretRef }}
+            - secretRef:
+                name: {{ .secretRef.name | quote }}
+                {{- if .secretRef.optional }}
+                optional: {{ .secretRef.optional }}
+                {{- end }}
+                {{- if .prefix }}
+            prefix: {{ .prefix | quote }}
+                {{- end }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
           ports:
             {{- range .Values.service.ports }}
             - name: {{ .name | default "http" }}
               containerPort: {{ .targetPort | default 80 }}
               protocol: {{ .protocol | default "TCP" }}
             {{- end }}
+          {{- if .Values.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.livenessProbe }}
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}

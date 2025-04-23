@@ -10,6 +10,13 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
+# command to be executed to start the container this will replace the entrypoint.sh script
+command: []
+# command:
+#   - /bin/sh
+#   - echo
+#   - "hello world"
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -126,3 +133,37 @@ traefik: {}
 #       - match: Host(`c.com`) && PathPrefix(`/api`)
 
 externalSecrets: []
+
+# livenessProbe:
+#   httpGet:
+#     path: /healthz        # endpoint
+#     port: 8080            # port
+#   initialDelaySeconds: 5  # Wait 5 seconds when the pod starts after first check
+#   periodSeconds: 10       # Check endpoint every 10 seconds
+#   timeoutSeconds: 5       # Wait until 5 seconds for a response
+#   failureThreshold: 3     # Limit of allowed failures 
+
+# readinessProbe:
+#   path: /ready
+#   port: 8080
+#   initialDelaySeconds: 5  # Wait 5 seconds when the pod starts after first check
+#   periodSeconds: 10       # Check endpoint every 10 seconds
+#   timeoutSeconds: 5       # Wait until 5 seconds for a response
+#   failureThreshold: 3     # Limit of allowed failures 
+
+# Env vars to be defined on deployment
+env: {}
+
+# Env vars from secret or configMap to be used on the deployment
+# envFrom: []
+# envFrom:
+#   - configMapRef:
+#       name: my-configmap-global
+#   - secretRef:
+#       name: my-app-secrets
+#   - configMapRef:
+#       name: config-opcional
+#       optional: true
+#   - secretRef:
+#       name: secrets-with-prefix
+#       prefix: SECRETO_
