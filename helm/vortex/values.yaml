@@ -61,6 +61,10 @@ engine:
   service:
     port: 8080
 
+  env:
+    V12_HTTP_SERVER_HOST: localhost
+    V12_CLUSTER_HOST: localhost
+
   securityContext: {}
     # capabilities:
     #   drop:
