@@ -3,9 +3,9 @@ entries:
   k8sapp:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-04-22T11:46:51.655980079Z"
+    created: "2025-04-23T14:47:05.844194743Z"
     description: A Helm chart for deploying applications in Kubernetes
-    digest: 717a8b7694e86b78c23c0bb5d4814c5b1a575ae5fff26ed577922f1a7e7a7590
+    digest: f8b61290bd5a0a5837367efb24f7c987e1e0b18daca53d84ddffbb0c4f0d52b7
     name: k8sapp
     type: application
     urls:
@@ -14,12 +14,12 @@ entries:
   vortex:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-04-22T11:46:51.656471472Z"
+    created: "2025-04-23T14:47:05.844670351Z"
     description: A Helm chart to deploy Vortex Stack in Kubernetes
-    digest: 5586e27343edd30831f650e55f126a0a1bac9b5e2980037925c65d922e995bd4
+    digest: 33ef647f9c42b7e9a9389d9df2797d5d0c970332b25c5644bc81cc624c9e07d9
     name: vortex
     type: application
     urls:
     - https://juanviola.github.io/charts/stable/vortex-0.1.0.tgz
     version: 0.1.0
-generated: "2025-04-22T11:46:51.655437321Z"
+generated: "2025-04-23T14:47:05.84363611Z"
