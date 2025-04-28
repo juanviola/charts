@@ -3,9 +3,9 @@ entries:
   k8sapp:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-04-23T19:15:44.98598698Z"
+    created: "2025-04-28T12:38:13.127863576Z"
     description: A Helm chart for deploying applications in Kubernetes
-    digest: d74455cad42ad720dee3ec8b508e4045721711ad23e21c46bf5d16f5a9a35eb6
+    digest: 5b8c10c2ae8a087a6ad000cedb5b715f2eedb4b78b70bbdcd1175d16628bd433
     name: k8sapp
     type: application
     urls:
@@ -14,12 +14,16 @@ entries:
   vortex:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-04-23T19:15:44.986524808Z"
+    created: "2025-04-28T12:38:13.132360226Z"
+    dependencies:
+    - name: mariadb
+      repository: https://charts.bitnami.com/bitnami
+      version: 20.5.3
     description: A Helm chart to deploy Vortex Stack in Kubernetes
-    digest: 15f8dd8842f3b2bfe3f78918758edb525d6fbcc629b925db68dbb4e535f4dc81
+    digest: 80df8e6c0f73a1a53d1cbeb5a3c510a915ab6dd891e9dc13328ca5811ea72c67
     name: vortex
     type: application
     urls:
     - https://juanviola.github.io/charts/stable/vortex-0.1.0.tgz
     version: 0.1.0
-generated: "2025-04-23T19:15:44.985397486Z"
+generated: "2025-04-28T12:38:13.127243518Z"
