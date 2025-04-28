@@ -181,9 +181,8 @@ rabbit:
 #----------------------------------------------------
 # Cache Component
 #----------------------------------------------------
-cache:
-  enabled: true
-  image: redis:7-alpine
+redis:
+  enabled: false
 
 #----------------------------------------------------
 # MySQL Component
