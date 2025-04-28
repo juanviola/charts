@@ -75,6 +75,11 @@ engine:
     # V12_CLUSTER_NODES_0: "akka://V12System@engine-1:2552"
     # V12_CLUSTER_NODES_1: "akka://V12System@engine-2:2552"
     # V12_CLUSTER_NODES_2: "akka://V12System@engine-3:2552"
+    #V12_REDIS_CACHE_SSL: false
+    #V12_REDIS_CACHE_PASSWORD: 
+    #V12_REDIS_CACHE_USERNAME: 
+    #V12_REDISRW_HOSTNAME: 
+    #V12_REDISRW_PORT: 6380
 
   securityContext: {}
     # capabilities:
@@ -187,6 +192,5 @@ redis:
 #----------------------------------------------------
 # MySQL Component
 #----------------------------------------------------
-mysql:
-  enabled: true
-  image: mariadb:10.7
+mariadb:
+  enabled: false
