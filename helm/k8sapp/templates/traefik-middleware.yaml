@@ -1,0 +1,15 @@
+{{- if .Values.traefik.middlewares }}
+  {{- range .Values.traefik.middlewares }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .name | default "my-middleware" }}
+spec:
+  {{- if .sourceRanges }}
+  ipAllowList:
+    sourceRange:
+    {{- toYaml .sourceRanges | nindent 4 }}
+  {{- end }}
+  {{- end }}
+{{- end }}

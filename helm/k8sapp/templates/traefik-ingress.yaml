@@ -22,5 +22,12 @@ spec:
       kind: Service
       port: {{ $port }}
     {{- end }}
+    {{- if .middlewares }}
+    middlewares:
+      {{- range .middlewares }}
+    - name: {{ .name }}
+      namespace: {{ $.Release.Namespace | default "default" }}
+      {{- end }}
+    {{- end }}
   {{- end }}
 {{- end }}

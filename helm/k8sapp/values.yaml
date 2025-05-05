@@ -114,6 +114,15 @@ affinity: {}
 
 traefik: {}
 # traefik:
+#   middlewares:
+#    - name: my-middleware
+#      sourceRanges:
+#        - 35.197.213.9/32
+#        - 34.142.95.12/32
+#    - name: other-middleware
+#      sourceRanges:
+#        - 35.197.213.9/32
+#        - 34.142.95.12/32
 #   entryPoints:
 #     - web
 #     - websecure
@@ -131,6 +140,9 @@ traefik: {}
 #       - match: Host(`a.com`) && PathPrefix(`/api`)
 #       - match: Host(`b.com`) && PathPrefix(`/api`)
 #       - match: Host(`c.com`) && PathPrefix(`/api`)
+#       middlewares:
+#       - name: my-middleware
+#       - name: other-middleware
 
 externalSecrets: []
 
