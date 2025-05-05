@@ -156,8 +156,9 @@ externalSecrets: []
 #   failureThreshold: 3     # Limit of allowed failures 
 
 # readinessProbe:
-#   path: /ready
-#   port: 8080
+#   httpGet:
+#     path: /healthz        # endpoint
+#     port: 8080            # port
 #   initialDelaySeconds: 5  # Wait 5 seconds when the pod starts after first check
 #   periodSeconds: 10       # Check endpoint every 10 seconds
 #   timeoutSeconds: 5       # Wait until 5 seconds for a response
