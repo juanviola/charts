@@ -1,19 +1,19 @@
-{{- if .Values.scheduler.enabled -}}
+{{- if .Values.workerAudit.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "vortex.fullname" . }}-scheduler
+  name: {{ include "vortex.fullname" . }}-worker-audit
   labels:
     {{- include "vortex.labels" . | nindent 4 }}
-    {{- include "vortex.scheduler.labels" . | nindent 4 }}
+    {{- include "vortex.workerAudit.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.scheduler.autoscaling.enabled }}
-  replicas: {{ .Values.scheduler.replicaCount }}
+  {{- if not .Values.workerAudit.autoscaling.enabled }}
+  replicas: {{ .Values.workerAudit.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
       {{- include "vortex.selectorLabels" . | nindent 6 }}
-      {{- include "vortex.scheduler.selectorLabels" . | nindent 6 }}
+      {{- include "vortex.workerAudit.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -22,7 +22,7 @@ spec:
       {{- end }}
       labels:
         {{- include "vortex.labels" . | nindent 8 }}
-        {{- include "vortex.scheduler.labels" . | nindent 8 }}
+        {{- include "vortex.workerAudit.labels" . | nindent 8 }}
 	{{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -35,37 +35,37 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}-scheduler
+        - name: {{ .Chart.Name }}-worker-audit
           securityContext:
-            {{- toYaml .Values.scheduler.securityContext | nindent 12 }}
-          image: "{{ .Values.scheduler.image.repository }}:{{ .Values.scheduler.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.scheduler.image.pullPolicy }}
+            {{- toYaml .Values.workerAudit.securityContext | nindent 12 }}
+          image: "{{ .Values.workerAudit.image.repository }}:{{ .Values.workerAudit.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.workerAudit.image.pullPolicy }}
           resources:
-            {{- toYaml .Values.scheduler.resources | nindent 12 }}
-          {{- with .Values.scheduler.volumeMounts }}
+            {{- toYaml .Values.workerAudit.resources | nindent 12 }}
+          {{- with .Values.workerAudit.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if .Values.scheduler.env }}
+          {{- if .Values.workerAudit.env }}
           env:
-            {{- range $key, $value := .Values.scheduler.env }}
+            {{- range $key, $value := .Values.workerAudit.env }}
             - name: {{ $key | quote }}
               value: {{ $value | quote }}
             {{- end }}
           {{- end }}
-      {{- with .Values.scheduler.volumes }}
+      {{- with .Values.workerAudit.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.scheduler.nodeSelector }}
+      {{- with .Values.workerAudit.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.scheduler.affinity }}
+      {{- with .Values.workerAudit.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.scheduler.tolerations }}
+      {{- with .Values.workerAudit.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

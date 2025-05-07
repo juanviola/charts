@@ -1,0 +1,32 @@
+{{- if .Values.workerAudit.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "vortex.fullname" . }}-worker-audit-hpa
+  labels:
+    {{- include "vortex.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "vortex.fullname" . }}-worker-audit
+  minReplicas: {{ .Values.workerAudit.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.workerAudit.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.workerAudit.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.workerAudit.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.workerAudit.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.workerAudit.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
