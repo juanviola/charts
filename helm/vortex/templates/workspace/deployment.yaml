@@ -1,0 +1,84 @@
+{{- if .Values.workspace.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vortex.fullname" . }}-workspace
+  labels:
+    {{- include "vortex.labels" . | nindent 4 }}
+    {{- include "vortex.workspace.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.workspace.autoscaling.enabled }}
+  replicas: {{ .Values.workspace.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "vortex.selectorLabels" . | nindent 6 }}
+      {{- include "vortex.workspace.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "vortex.labels" . | nindent 8 }}
+        {{- include "vortex.workspace.labels" . | nindent 8 }}
+	{{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "vortex.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-workspace
+          securityContext:
+            {{- toYaml .Values.workspace.securityContext | nindent 12 }}
+          image: "{{ .Values.workspace.image.repository }}:{{ .Values.workspace.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.workspace.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.workspace.service.port }}
+              protocol: TCP
+          {{- if .Values.workspace.livenessProbe }}
+          livenessProbe:
+            {{- toYaml .Values.workspace.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.workspace.livenessProbe }}
+          readinessProbe:
+            {{- toYaml .Values.workspace.readinessProbe | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.workspace.resources | nindent 12 }}
+          {{- with .Values.workspace.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.workspace.env }}
+          env:
+            {{- range $key, $value := .Values.workspace.env }}
+            - name: {{ $key | quote }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
+      {{- with .Values.workspace.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.workspace.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.workspace.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.workspace.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

@@ -155,31 +155,36 @@ portal:
 #----------------------------------------------------
 workspace:
   enabled: false
-
+  autoscaling:
+    enabled: false
 #----------------------------------------------------
 # Worker Audit Component
 #----------------------------------------------------
 workerAudit:
   enabled: false
-
+  autoscaling:
+    enabled: false
 #----------------------------------------------------
 # Worker Component
 #----------------------------------------------------
 worker:
   enabled: false
-
+  autoscaling:
+    enabled: false
 #----------------------------------------------------
 # Scheduler Component
 #----------------------------------------------------
 scheduler:
   enabled: false
-
+  autoscaling:
+    enabled: false
 #----------------------------------------------------
 # Admin Component
 #----------------------------------------------------
 admin:
   enabled: false
-
+  autoscaling:
+    enabled: false
 #----------------------------------------------------
 # Rabbitmq Component
 #----------------------------------------------------

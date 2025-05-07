@@ -1,0 +1,32 @@
+{{- if .Values.workspace.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "vortex.fullname" . }}-workspace-hpa
+  labels:
+    {{- include "vortex.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "vortex.fullname" . }}-workspace
+  minReplicas: {{ .Values.workspace.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.workspace.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.workspace.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.workspace.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.workspace.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.workspace.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

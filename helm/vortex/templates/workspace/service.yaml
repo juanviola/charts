@@ -1,0 +1,20 @@
+{{- if .Values.workspace.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vortex.fullname" . }}-workspace
+  labels:
+    {{- include "vortex.labels" . | nindent 4 }}
+    {{- include "vortex.workspace.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.workspace.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "vortex.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/app: workspace
+{{- end }}
