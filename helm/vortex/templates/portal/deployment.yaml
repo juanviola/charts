@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "vortex.fullname" . }}-gateway
+  name: {{ include "vortex.fullname" . }}-portal
   labels:
     {{- include "vortex.labels" . | nindent 4 }}
     {{- include "vortex.portal.labels" . | nindent 4 }}
@@ -35,7 +35,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}-gateway
+        - name: {{ .Chart.Name }}-portal
           securityContext:
             {{- toYaml .Values.portal.securityContext | nindent 12 }}
           image: "{{ .Values.portal.image.repository }}:{{ .Values.portal.image.tag | default .Chart.AppVersion }}"
