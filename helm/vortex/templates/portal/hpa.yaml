@@ -1,0 +1,32 @@
+{{- if .Values.portal.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "vortex.fullname" . }}-portal-hpa
+  labels:
+    {{- include "vortex.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "vortex.fullname" . }}-portal
+  minReplicas: {{ .Values.portal.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.portal.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.portal.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.portal.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.portal.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.portal.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
