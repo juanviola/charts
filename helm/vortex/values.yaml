@@ -140,49 +140,50 @@ gateway:
 # Gateway WebSocket Component
 #----------------------------------------------------
 gatewayWebSocket:
-  enabled: true
-
+  enabled: false
+  autoscaling:
+    enabled: false
 #----------------------------------------------------
 # Portal Component
 #----------------------------------------------------
 portal:
-  enabled: true
+  enabled: false
 
 #----------------------------------------------------
 # Workspace Component
 #----------------------------------------------------
 workspace:
-  enabled: true
+  enabled: false
 
 #----------------------------------------------------
 # Worker Audit Component
 #----------------------------------------------------
 workerAudit:
-  enabled: true
+  enabled: false
 
 #----------------------------------------------------
 # Worker Component
 #----------------------------------------------------
 worker:
-  enabled: true
+  enabled: false
 
 #----------------------------------------------------
 # Scheduler Component
 #----------------------------------------------------
 scheduler:
-  enabled: true
+  enabled: false
 
 #----------------------------------------------------
 # Admin Component
 #----------------------------------------------------
 admin:
-  enabled: true
+  enabled: false
 
 #----------------------------------------------------
 # Rabbitmq Component
 #----------------------------------------------------
 rabbit:
-  enabled: true
+  enabled: false
   image: rabbitmq:3-management 
 
 #----------------------------------------------------

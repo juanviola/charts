@@ -1,0 +1,84 @@
+{{- if .Values.gatewayWebSocket.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vortex.fullname" . }}-gateway-websocket
+  labels:
+    {{- include "vortex.labels" . | nindent 4 }}
+    {{- include "vortex.gatewayWebSocket.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.gatewayWebSocket.autoscaling.enabled }}
+  replicas: {{ .Values.gatewayWebSocket.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "vortex.selectorLabels" . | nindent 6 }}
+      {{- include "vortex.gatewayWebSocket.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "vortex.labels" . | nindent 8 }}
+        {{- include "vortex.gatewayWebSocket.labels" . | nindent 8 }}
+	{{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "vortex.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-gateway-websocket
+          securityContext:
+            {{- toYaml .Values.gatewayWebSocket.securityContext | nindent 12 }}
+          image: "{{ .Values.gatewayWebSocket.image.repository }}:{{ .Values.gatewayWebSocket.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.gatewayWebSocket.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.gatewayWebSocket.service.port }}
+              protocol: TCP
+          {{- if .Values.gatewayWebSocket.livenessProbe }}
+          livenessProbe:
+            {{- toYaml .Values.gatewayWebSocket.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.gatewayWebSocket.livenessProbe }}
+          readinessProbe:
+            {{- toYaml .Values.gatewayWebSocket.readinessProbe | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.gatewayWebSocket.resources | nindent 12 }}
+          {{- with .Values.gatewayWebSocket.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.gatewayWebSocket.env }}
+          env:
+            {{- range $key, $value := .Values.gatewayWebSocket.env }}
+            - name: {{ $key | quote }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
+      {{- with .Values.gatewayWebSocket.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gatewayWebSocket.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gatewayWebSocket.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gatewayWebSocket.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
