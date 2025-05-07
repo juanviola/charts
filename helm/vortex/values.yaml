@@ -132,7 +132,9 @@ engine:
 # Gateway Component
 #----------------------------------------------------
 gateway:
-  enabled: true
+  enabled: false
+  autoscaling:
+    enabled: false
 
 #----------------------------------------------------
 # Gateway WebSocket Component
