@@ -13,3 +13,7 @@ dependencies:
     version: 20.13.3
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
+  - name: elasticsearch
+    version: 22.0.3
+    repository: https://charts.bitnami.com/bitnami
+    condition: elasticsearch.enabled
