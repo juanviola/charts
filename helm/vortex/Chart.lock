@@ -6,7 +6,7 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
   version: 20.13.3
 - name: elasticsearch
-  repository: https://charts.bitnami.com/bitnami
-  version: 22.0.3
-digest: sha256:d23d675141ae13a8167845db9f508d976b75394b938a3f456429e9e196aa5be3
-generated: "2025-05-14T19:14:31.881042-03:00"
+  repository: https://helm.elastic.co
+  version: 8.5.1
+digest: sha256:ffa9fd5df2f657432b2c32d2de4b7e674325478ca193443235be39a5ce7f8a40
+generated: "2025-05-16T17:38:29.561827-03:00"
