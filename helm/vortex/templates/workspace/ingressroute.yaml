@@ -1,0 +1,22 @@
+{{- if .Values.ingressRoutes.enabled }}
+{{- range $service := .Values.ingressRoutes.services }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ $service.name }}
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    {{- range $route := $service.routes }}
+    - match: {{ $route.match | quote }}
+      kind: Rule
+      services:
+        - name: {{ $service.name }}
+          kind: {{ $service.kind }}
+          port: {{ $service.port }}
+    {{- end }}
+{{- end }}
+{{- end }}
