@@ -3,9 +3,9 @@ entries:
   k8sapp:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-05-16T21:19:30.635102715Z"
+    created: "2025-05-20T21:21:30.293584186Z"
     description: A Helm chart for deploying applications in Kubernetes
-    digest: a9684b046d5dcd180cb8f436b42802e26fde1f27895544a9cb8ef51eab203546
+    digest: dc0fd1c6df3b912ffda1f56a3f407ab78e746f43281b289163bf957db3b0592c
     name: k8sapp
     type: application
     urls:
@@ -14,7 +14,7 @@ entries:
   vortex:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-05-16T21:19:30.654558085Z"
+    created: "2025-05-20T21:21:30.319410056Z"
     dependencies:
     - condition: mariadb.enabled
       name: mariadb
@@ -23,16 +23,28 @@ entries:
     - condition: redis.enabled
       name: redis
       repository: https://charts.bitnami.com/bitnami
-      version: 20.13.3
+      version: 21.1.3
     - condition: elasticsearch.enabled
       name: elasticsearch
+      repository: https://helm.elastic.co
+      version: 8.5.1
+    - condition: opensearch.enabled
+      name: opensearch
+      repository: https://opensearch-project.github.io/helm-charts
+      version: 3.0.0
+    - condition: rabbitmq.enabled
+      name: rabbitmq
       repository: https://charts.bitnami.com/bitnami
-      version: 22.0.4
+      version: 16.0.2
+    - condition: traefik.enabled
+      name: traefik
+      repository: https://traefik.github.io/charts
+      version: 35.2.0
     description: A Helm chart to deploy Vortex Stack in Kubernetes
-    digest: e4118761bf6ef6e3d499632fd624f92ab51a400beda7971ad555cc93477f9409
+    digest: a809bb455a9fd75a6cd64149a2ff53fd013302150c60d4d4a366fb3d3d2c97b5
     name: vortex
     type: application
     urls:
     - https://juanviola.github.io/charts/stable/vortex-0.1.1.tgz
     version: 0.1.1
-generated: "2025-05-16T21:19:30.634496177Z"
+generated: "2025-05-20T21:21:30.292970035Z"
