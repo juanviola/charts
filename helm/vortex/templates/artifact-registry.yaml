@@ -1,0 +1,9 @@
+{{- if .Values.artifactRegistry.enabled -}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: artifact-registry
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: {{ printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"auth\":\"%s\"}}}" .Values.artifactRegistry.server .Values.artifactRegistry.username .Values.artifactRegistry.password (printf "%s:%s" .Values.artifactRegistry.username .Values.artifactRegistry.password | b64enc) | b64enc | quote }}
+{{- end -}}

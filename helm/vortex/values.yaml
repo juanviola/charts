@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 imagePullSecrets:
-  - name: acr-secret
+  - name: artifact-registry
 
 nameOverride: ""
 fullnameOverride: ""
