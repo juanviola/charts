@@ -1,12 +1,13 @@
 {{- if .Values.engine.enabled -}}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "vortex.fullname" . }}-engine
   labels:
     {{- include "vortex.labels" . | nindent 4 }}
     {{- include "vortex.engine.labels" . | nindent 4 }}
 spec:
+  serviceName: {{ include "vortex.fullname" . }}-engine-headless
   {{- if not .Values.engine.autoscaling.enabled }}
   replicas: {{ .Values.engine.replicaCount }}
   {{- end }}
@@ -23,7 +24,7 @@ spec:
       labels:
         {{- include "vortex.labels" . | nindent 8 }}
         {{- include "vortex.engine.labels" . | nindent 8 }}
-	{{- with .Values.podLabels }}
+        {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
@@ -41,9 +42,26 @@ spec:
           image: "{{ .Values.engine.image.repository }}:{{ .Values.engine.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.engine.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: {{ .Values.engine.service.port }}
-              protocol: TCP
+          {{- range .Values.engine.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+              {{- if .protocol }}
+              protocol: {{ .protocol }}
+              {{- end }}
+          {{- end }}
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: V12_CLUSTER_HOST
+              value: "$(POD_NAME).vortex-engine-headless.{{ .Release.Namespace }}.svc.cluster.local"  
+            {{- if .Values.engine.env }}
+            {{- range $key, $value := .Values.engine.env }}
+            - name: {{ $key | quote }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
           {{- if .Values.engine.livenessProbe }}
           livenessProbe:
             {{- toYaml .Values.engine.livenessProbe | nindent 12 }}
@@ -57,13 +75,6 @@ spec:
           {{- with .Values.engine.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- if .Values.engine.env }}
-          env:
-            {{- range $key, $value := .Values.engine.env }}
-            - name: {{ $key | quote }}
-              value: {{ $value | quote }}
-            {{- end }}
           {{- end }}
       {{- with .Values.engine.volumes }}
       volumes:

@@ -2,12 +2,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "vortex.fullname" . }}-engine
+  name: {{ include "vortex.fullname" . }}-engine-headless
   labels:
     {{- include "vortex.labels" . | nindent 4 }}
     {{- include "vortex.engine.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.engine.service.type }}
+  clusterIP: None
+  selector:
+    {{- include "vortex.selectorLabels" . | nindent 4 }}
+    {{- include "vortex.engine.selectorLabels" . | nindent 4 }}
   ports:
   {{- range .Values.engine.service.ports }}
     - name: {{ .name }}
@@ -17,8 +20,4 @@ spec:
       protocol: {{ .protocol }}
       {{- end }}
   {{- end }}
-  selector:
-    app.kubernetes.io/name: {{ include "vortex.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/app: engine
 {{- end }}

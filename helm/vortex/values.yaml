@@ -57,9 +57,20 @@ engine:
     repository: vortexio.azurecr.io/vortex/engine
     tag: develop
     pullPolicy: Always
-
+  
   service:
-    port: 8080
+    type: ClusterIP
+    ports:
+      - name: engine
+        port: 8080
+        targetPort: 8080
+        protocol: TCP
+      - name: management
+        port: 8558
+        targetPort: 8558
+      - name: remoting
+        port: 2552
+        targetPort: 2552
 
   env:
     V12_HTTP_SERVER_HOST: localhost
