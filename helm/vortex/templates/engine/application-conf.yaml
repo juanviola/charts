@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: akka-application-conf
+data:
+  application.conf: |
+    {{ .Values.engine.applicationConf | nindent 4 }}

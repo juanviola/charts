@@ -113,14 +113,25 @@ engine:
     #   memory: 128Mi
 
   # Additional volumes on the output Deployment definition.
-  volumes: []
+  # volumes: []
+  volumes:
+    - name: config-volume
+      configMap:
+        name: akka-application-conf
+  
   # - name: foo
   #   secret:
   #     secretName: mysecret
   #     optional: false
 
   # Additional volumeMounts on the output Deployment definition.
-  volumeMounts: []
+  # volumeMounts: []
+  volumeMounts:
+    - name: config-volume
+      readOnly: true
+      mountPath: /opt/app/conf/application.conf
+      subPath: application.conf
+
   # - name: foo
   #   mountPath: "/etc/foo"
   #   readOnly: true
@@ -138,6 +149,327 @@ engine:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
+
+  applicationConf: |
+    akka {
+      http.server.request-timeout = ${?V12_HTTP_SERVER_TIMEOUT}
+      http.server.idle-timeout = ${?V12_HTTP_SERVER_IDLE}
+      loggers = ["akka.event.slf4j.Slf4jLogger"]
+      logging-filter = "akka.event.slf4j.Slf4jLoggingFilter"
+      log-dead-letters = off 
+      log-dead-letters-during-shutdown = off
+      implicit-registration-logging = true
+      
+      actor {
+        provider = "cluster" 
+        internal-dispatcher{
+        type = Dispatcher
+        executor = "fork-join-executor"
+        fork-join-executor {
+          parallelism-min = 2
+          parallelism-factor = 2.0
+          parallelism-max = ${?V12_INTERNAL_SIZE}
+        }
+        throughput = 1
+      }
+        
+      default-dispatcher{
+        type = Dispatcher
+        executor = "fork-join-executor"
+        fork-join-executor {
+          parallelism-min = 2
+          parallelism-factor = 2.0
+          parallelism-max = ${?V12_DEFAULT_SIZE}
+        }
+        throughput = 1
+      }
+      
+      allow-java-serialization = on
+        enable-additional-serialization-bindings = on
+        serializers {
+        java = "akka.serialization.JavaSerializer"
+            kryo = "io.altoo.akka.serialization.kryo.KryoSerializer"
+        }
+      
+        serialization-bindings {
+          "io.vortex.akka.datastreams.delivery.DeliveryConfirmed" = kryo
+          "io.vortex.akka.datastreams.delivery.DeliverySent" = kryo
+          "io.vortex.akka.datastreams.delivery.Delivery" = kryo
+          "io.vortex.akka.datastreams.delivery.DeliveryConfirm" = kryo
+          "io.vortex.akka.datastreams.expression.transcription.DataTableContext" = kryo
+          "io.vortex.akka.datastreams.expression.transcription.DataTableRowContext" = kryo
+          "io.vortex.akka.datastreams.expression.messengers.DataTableRowScraperContext" = kryo
+          "io.vortex.akka.datastreams.expression.messengers.SelectContext" = kryo
+          "io.vortex.akka.datastreams.expression.messengers.SelectExprContext" = kryo
+          "io.vortex.akka.datastreams.expression.messengers.WhereContext" = kryo
+          "io.vortex.akka.datastreams.expression.messengers.WhereFilterContext" = kryo
+          "io.vortex.akka.datastreams.expression.messengers.ColumnIndexerContext" = kryo			
+          "io.vortex.akka.messengers.RequestContext" = kryo
+          "io.vortex.akka.messengers.SuccessContext" = kryo
+          "io.vortex.akka.messengers.ErrorContext" = kryo
+          "io.vortex.pipelines.PipeLineProtein" = kryo		
+          "io.vortex.pipelines.PipeLine" = kryo
+          "io.vortex.pipelines.Step" = kryo
+          "io.vortex.pipelines.globals.GlobalTemplate" = kryo	
+          "io.vortex.pipelines.globals.GlobalValue" = kryo	
+          "io.vortex.pipelines.functions.Triplets" = kryo	
+          "io.vortex.akka.pipelines.expression.messengers.StepExecuteContext" = kryo
+          "io.vortex.akka.pipelines.expression.messengers.StepReduceContext" = kryo
+          "io.vortex.io.UnsafeVector" = kryo
+          "java.util.HashMap" = kryo
+          "io.vortex.Tuple" = kryo	
+        } 
+      }
+    } 
+
+    akka-kryo-serialization {
+      type = "graph"
+      id-strategy = "default"
+      buffer-size = 65536
+      max-buffer-size = -1
+      queue-builder = "io.altoo.akka.serialization.kryo.DefaultQueueBuilder"
+      use-manifests = false
+      use-unsafe = true
+      post-serialization-transformations = "off"
+      implicit-registration-logging = false
+      kryo-trace = false
+      kryo-reference-map = true
+      kryo-initializer = "io.altoo.akka.serialization.kryo.DefaultKryoInitializer"
+      resolve-subclasses = false
+
+      mappings {
+        # fully.qualified.classname1 = id1
+        # fully.qualified.classname2 = id2
+      }
+
+      classes = [
+        # fully.qualified.classname1
+        # fully.qualified.classname2
+      ]
+
+      optional-basic-mappings {
+        // scala
+        "scala.Some" = 30
+        "scala.None$" = 31
+        "scala.util.Left" = 32
+        "scala.util.Right" = 33
+        "scala.util.Success" = 34
+        "scala.util.Failure" = 35
+
+        "scala.collection.immutable.Nil$" = 40
+        "scala.collection.immutable.$colon$colon" = 41
+        "scala.collection.immutable.Map$EmptyMap$" = 42
+        "scala.collection.immutable.Map$Map1" = 43
+        "scala.collection.immutable.Map$Map2" = 44
+        "scala.collection.immutable.Map$Map3" = 45
+        "scala.collection.immutable.Map$Map4" = 46
+        "scala.collection.immutable.Set$EmptySet$" = 47
+        "scala.collection.immutable.Set$Set1" = 48
+        "scala.collection.immutable.Set$Set2" = 49
+        "scala.collection.immutable.Set$Set3" = 50
+        "scala.collection.immutable.Set$Set4" = 51
+
+        "scala.Tuple2" = 60
+        "scala.Tuple3" = 61
+        "scala.Tuple4" = 62
+        "scala.Tuple5" = 63
+        "scala.Tuple6" = 64
+        "scala.Tuple7" = 65
+        "scala.Tuple8" = 66
+
+        // java
+        "java.util.UUID" = 70
+
+        "java.time.LocalDate" = 71
+        "java.time.LocalDateTime" = 72
+        "java.time.LocalTime" = 73
+        "java.time.ZoneOffset" = 74
+        "java.time.ZoneRegion" = 75
+        "java.time.ZonedDateTime" = 76
+        "java.time.Instant" = 77
+        "java.time.Duration" = 78
+      }
+    }
+
+    akka {
+      http.server.backlog = ${?V12_HTTP_SERVER_BACKLOG}
+      http.server.max-connections = ${?V12_HTTP_SERVER_MAX}
+      http.caching.lfu-cache.max-capacity = ${?V12_HTTP_SERVER_LFU}
+      http.server.pipelining-limit = 1
+      http.server.verbose-error-messages = on
+      http.server.parsing.max-content-length = "infinite"  
+      loglevel = ${?V12_LOGLEVEL} 
+      
+      management.http.port = "8558"
+      management.http.route-providers-read-only = false
+      management.http.hostname = "0.0.0.0"
+      
+      coordinated-shutdown.exit-jvm = on
+
+      remote {      
+        artery {
+          enabled = on
+          transport = tcp
+          canonical.port = 2552
+          advanced {
+            maximum-frame-size = 128MiB
+            maximum-large-frame-size = 256MiB
+            buffer-pool-size = 1024
+            large-buffer-pool-size = 256
+            use-dispatcher = "remote-dispatcher"
+            use-control-stream-dispatcher = "remote-control-dispatcher"
+          }
+          large-message-destinations = [
+            "/user/rawDataScraper*",
+            "/user/fastLaneTableRowScraper*",     	
+            "/user/dataTableScraperReducer*",
+            "/user/dataTableSelectReducer*",
+            "/user/dataProteinSelectReducer*",
+            "/user/pipeLineStepExecutor*",
+            "/user/pipeLineStepReducer*",
+            "/user/pipeLineReducer*",
+          ]
+        }
+      }  
+      
+      cluster {  
+        min-nr-of-members = 1
+        use-dispatcher = cluster-dispatcher
+        gossip-interval = 3s
+        gossip-time-to-live = 5s
+        leader-actions-interval = 10s
+        failure-detector.threshold = 24.0
+        failure-detector.min-std-deviation = 30s
+        failure-detector.heartbeat-interval = 60s	
+        failure-detector.expected-response-after = 10s
+        failure-detector.monitored-by-nr-of-members = 2
+        failure-detector.expected-response-after = 300s
+        failure-detector.acceptable-heartbeat-pause = 300s
+        downing-provider-class = "akka.cluster.sbr.SplitBrainResolverProvider"
+      
+        pub-sub {
+          name = distributedPubSubMediator
+          role = ""
+          routing-logic = round-robin
+          gossip-interval = 10s
+          removed-time-to-live = 60s
+          max-delta-elements = 3000
+          send-to-dead-letters-when-no-subscribers = off
+          use-dispatcher = "pubsub-dispatcher"
+        }
+      }  
+    }
+
+    akka {
+      persistence {
+        journal {
+          plugin = "jdbc-journal"
+          // Enable the line below to automatically start the journal when the actorsystem is started
+          auto-start-journals = ["jdbc-journal"]
+        }
+        snapshot-store {
+          plugin = "jdbc-snapshot-store"
+          // Enable the line below to automatically start the snapshot-store when the actorsystem is started
+          auto-start-snapshot-stores = ["jdbc-snapshot-store"]
+        }
+      }
+    }
+
+    akka-persistence-jdbc {
+      shared-databases {
+        slick {
+          profile = "slick.jdbc.MySQLProfile$"
+          db {
+            url = ${?V12_SLICK_URL}
+            user = ${?V12_SLICK_USER}
+            password = ${?V12_SLICK_PASSWORD}
+            driver = "com.mysql.cj.jdbc.Driver"
+            numThreads = 5
+            maxConnections = 5
+            minConnections = 1
+          }
+        }
+      }
+    }
+
+    jdbc-journal {
+      use-shared-db = "slick"
+    }
+
+    # the akka-persistence-snapshot-store in use
+    jdbc-snapshot-store {
+      use-shared-db = "slick"
+    }
+
+    # the akka-persistence-query provider in use
+    jdbc-read-journal {
+      use-shared-db = "slick"
+    }
+
+    akka.cluster.singleton {
+      singleton-name = "singleton"
+      role = ""
+      hand-over-retry-interval = 1s
+      min-number-of-hand-over-retries = 15
+      use-lease = ""
+      lease-retry-interval = 5s
+    }
+
+    akka.cluster.singleton-proxy {
+      singleton-name = ${akka.cluster.singleton.singleton-name}
+      role = ""
+      singleton-identification-interval = 1s
+      buffer-size = 3000 
+    }
+
+    remote-dispatcher {
+        type = Dispatcher
+        executor = "fork-join-executor"
+        fork-join-executor {
+          parallelism-min = 2
+          parallelism-factor = 2.0
+          parallelism-max = ${?V12_REMOTE_SIZE}
+        }
+        throughput = 1
+    }
+
+    remote-control-dispatcher {
+        type = Dispatcher
+        executor = "fork-join-executor"
+        fork-join-executor {
+          parallelism-min = 2
+          parallelism-factor = 2.0
+          parallelism-max = ${?V12_CONTROL_SIZE}
+        }
+        throughput = 1
+    }
+
+    cluster-dispatcher {
+        type = Dispatcher
+        executor = "fork-join-executor"
+        fork-join-executor {
+          parallelism-min = 2
+          parallelism-factor = 2.0
+          parallelism-max = ${?V12_CLUSTER_SIZE}
+        }
+        throughput = 1
+    }
+
+    pubsub-dispatcher {
+        type = Dispatcher
+        executor = "fork-join-executor"
+        fork-join-executor {
+          parallelism-min = 2
+          parallelism-factor = 2.0
+          parallelism-max = ${?V12_PUBSUB_SIZE}
+        }
+        throughput = 1      
+    }
+
+    include "datastreams/application"
+    include "pipelines/application"
+    include "commons/application"
+    include "votex-azure/application"
 
 #----------------------------------------------------
 # Gateway Component
