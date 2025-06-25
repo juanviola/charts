@@ -3,9 +3,9 @@ entries:
   k8sapp:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-06-02T17:39:46.130293068Z"
+    created: "2025-06-25T19:58:43.441708682Z"
     description: A Helm chart for deploying applications in Kubernetes
-    digest: 6d39b9bd0047da10d31ded4f3ac2c5a9faef2e8f5563255891d2a78784a93f7d
+    digest: 6d0159bda3d2d4a8ee183b929036c983a8fa1bdd4186db8d85388f5c50f52975
     name: k8sapp
     type: application
     urls:
@@ -14,7 +14,7 @@ entries:
   vortex:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-06-02T17:39:46.155127365Z"
+    created: "2025-06-25T19:58:43.467125281Z"
     dependencies:
     - condition: mariadb.enabled
       name: mariadb
@@ -37,10 +37,10 @@ entries:
       repository: https://traefik.github.io/charts
       version: 35.2.0
     description: A Helm chart to deploy Vortex Stack in Kubernetes
-    digest: 21008d78fff74f595f4c5b3217cdb9112b8c6df099d28de8a7892b6d24958edd
+    digest: 75d874cb30258a121dd2752bca72f5924fb366ad7a01b75f0d5c52585ac5628e
     name: vortex
     type: application
     urls:
     - https://juanviola.github.io/charts/stable/vortex-0.1.1.tgz
     version: 0.1.1
-generated: "2025-06-02T17:39:46.129676347Z"
+generated: "2025-06-25T19:58:43.441069885Z"
