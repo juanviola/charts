@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: akka-shutdown
+data:
+  shutdown.sh: |
+    #!/bin/bash
+    AKKA_MANAGEMENT_HOST="${HOSTNAME}"
+    AKKA_MANAGEMENT_PORT="8558"
+    NODE_TO_REMOVE_ADDRESS="akka://V12System@${HOSTNAME}.vortex-engine-headless.vortex.svc.cluster.local:2552"
+    ENCODED_ADDRESS=$(echo -n "$NODE_TO_REMOVE_ADDRESS" | jq -sRr @uri)
+    API_URL="http://${AKKA_MANAGEMENT_HOST}:${AKKA_MANAGEMENT_PORT}/cluster/members/${ENCODED_ADDRESS}"
+
+    echo "trying to remove node: ${NODE_TO_REMOVE_ADDRESS}"
+    echo "Using API URL: ${API_URL}"
+
+    RESPONSE=$(curl -X DELETE -s -w "%{http_code}" "$API_URL")
+
+    echo "--------------------------------"
+    echo $RESPONSE
