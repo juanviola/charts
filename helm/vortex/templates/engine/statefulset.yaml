@@ -1,4 +1,4 @@
-{{- if .Values.engine.enabled -}}
+{{- if .Values.engine.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -54,7 +54,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: V12_CLUSTER_HOST
+            - name: "V12_CLUSTER_HOST"
               value: "$(POD_NAME).vortex-engine-headless.{{ .Release.Namespace }}.svc.cluster.local"  
             {{- if .Values.engine.env }}
             {{- range $key, $value := .Values.engine.env }}
@@ -66,20 +66,28 @@ spec:
           livenessProbe:
             {{- toYaml .Values.engine.livenessProbe | nindent 12 }}
           {{- end }}
-          {{- if .Values.engine.livenessProbe }}
+          {{- if .Values.engine.readinessProbe }}
           readinessProbe:
             {{- toYaml .Values.engine.readinessProbe | nindent 12 }}
           {{- end }}
           resources:
             {{- toYaml .Values.engine.resources | nindent 12 }}
-          {{- with .Values.engine.volumeMounts }}
           volumeMounts:
+            - name: akka-shutdown-script
+              mountPath: /opt/app/shutdown.sh
+              subPath: shutdown.sh
+              readOnly: false
+            {{- with .Values.engine.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.engine.volumes }}
+            {{- end }}
       volumes:
+        - name: akka-shutdown-script
+          configMap:
+            name: akka-shutdown
+            defaultMode: 0755
+        {{- with .Values.engine.volumes }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       {{- with .Values.engine.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
