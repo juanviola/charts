@@ -118,6 +118,9 @@ engine:
     - name: config-volume
       configMap:
         name: akka-application-conf
+    # - name: akka-shutdown
+    #   configMap:
+    #     name: akka-shutdown
   
   # - name: foo
   #   secret:
@@ -131,6 +134,10 @@ engine:
       readOnly: true
       mountPath: /opt/app/conf/application.conf
       subPath: application.conf
+    # - name: akka-shutdown
+    #   readOnly: true
+    #   mountPath: /opt/app/scripts/shutdown.sh
+    #   subPath: shutdown.sh
 
   # - name: foo
   #   mountPath: "/etc/foo"

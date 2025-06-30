@@ -7,6 +7,7 @@ metadata:
     {{- include "vortex.labels" . | nindent 4 }}
     {{- include "vortex.engine.labels" . | nindent 4 }}
 spec:
+  terminationGracePeriodSeconds: 3600
   serviceName: {{ include "vortex.fullname" . }}-engine-headless
   {{- if not .Values.engine.autoscaling.enabled }}
   replicas: {{ .Values.engine.replicaCount }}
@@ -70,6 +71,10 @@ spec:
           readinessProbe:
             {{- toYaml .Values.engine.readinessProbe | nindent 12 }}
           {{- end }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "/opt/app/shutdown.sh"]
           resources:
             {{- toYaml .Values.engine.resources | nindent 12 }}
           volumeMounts:
