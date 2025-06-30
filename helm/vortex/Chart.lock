@@ -14,5 +14,8 @@ dependencies:
 - name: traefik
   repository: https://traefik.github.io/charts
   version: 35.2.0
-digest: sha256:a8c802f567c909c9733e6b5888c4c1327709a0b047a670ffd24f78ebb64771f5
-generated: "2025-05-21T09:59:10.21544-03:00"
+- name: vault
+  repository: https://helm.releases.hashicorp.com
+  version: 0.30.0
+digest: sha256:b9dcf69e3a3e96fc565ec41355f0982d7893f4c5e8faf71bbd7eb4dc1623d923
+generated: "2025-06-30T09:26:17.780767-03:00"

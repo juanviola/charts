@@ -25,3 +25,7 @@ dependencies:
     version: 35.2.0
     repository: https://traefik.github.io/charts
     condition: traefik.enabled
+  - name: vault
+    version: 0.30.0
+    repository: https://helm.releases.hashicorp.com
+    condition: vault.enabled

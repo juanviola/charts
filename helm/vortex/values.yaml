@@ -561,3 +561,9 @@ elasticsearch:
   enabled: false
   image:
     tag: 7.10.2
+
+#----------------------------------------------------
+# Vault Component
+#----------------------------------------------------
+vault:
+  enabled: false
