@@ -3,9 +3,9 @@ entries:
   k8sapp:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-07-17T19:51:59.804806822Z"
+    created: "2025-07-17T20:03:08.170294543Z"
     description: A Helm chart for deploying applications in Kubernetes
-    digest: 023813da6f1404b7b75754993b3ce09361deaf2a03e30a8281fe70282f11dc11
+    digest: cedf662e428c05224763123405ad0b7e646e36ae5908497fec3f453e0baeccdc
     name: k8sapp
     type: application
     urls:
@@ -14,7 +14,7 @@ entries:
   vortex:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-07-17T19:51:59.840525835Z"
+    created: "2025-07-17T20:03:08.204700071Z"
     dependencies:
     - condition: mariadb.enabled
       name: mariadb
@@ -45,10 +45,10 @@ entries:
       repository: https://charts.external-secrets.io
       version: 0.18.2
     description: A Helm chart to deploy Vortex Stack in Kubernetes
-    digest: 53d2e32f39db145b9fde067da1f19c0b16c8a0edf2075fd38a3ffb45148e3463
+    digest: 4d2490e82932858309ddfbd75a66b4399768eb67f61b8e501310e33b2aa07237
     name: vortex
     type: application
     urls:
     - https://juanviola.github.io/charts/stable/vortex-0.1.1.tgz
     version: 0.1.1
-generated: "2025-07-17T19:51:59.804170216Z"
+generated: "2025-07-17T20:03:08.169722215Z"
