@@ -116,7 +116,7 @@ kubectl -n ${NAMESPACE} cp default-env/worker-core.json ${VAULT_POD}:/tmp/worker
 kubectl -n ${NAMESPACE} cp default-env/workspace-core.json ${VAULT_POD}:/tmp/workspace-core.json
 
 # get vault root token
-TOKEN=$(kubectl get secret vault-init -o jsonpath='{.data.vault-init\.json}' | base64 -d | jq -r '.root_token')
+TOKEN=$(kubectl -n ${NAMESPACE} get secret vault-init -o jsonpath='{.data.vault-init\.json}' | base64 -d | jq -r '.root_token')
 
 # create external secrets token
 kubectl -n ${NAMESPACE} create secret generic es-token --from-literal=token=${TOKEN}
