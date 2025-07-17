@@ -41,7 +41,7 @@ NAMESPACE=vortex
 HELM_CHART_PATH="${SCRIPT_DIR}/../../helm/vortex"
 MARIADB_ROOT_PASSWORD=$(kubectl get secret --namespace ${NAMESPACE} mysql -o jsonpath="{.data.mariadb-root-password}" | base64 -d)
 
-if helm upgrade --install --namespace=${NAMESPACE} --create-namespace vortex "${HELM_CHART_PATH}" -f config.local.yaml; then
+if helm upgrade --install --namespace=${NAMESPACE} --create-namespace vortex "${HELM_CHART_PATH}" -f config.yaml; then
     echo -e "${GREEN}✓ Helm upgrade completed successfully${NC}"
 else
     echo -e "${RED}✗ Helm upgrade failed${NC}"

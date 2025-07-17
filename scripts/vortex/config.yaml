@@ -1,0 +1,255 @@
+engine:
+  enabled: true
+  env:
+    V12_HTTP_SERVER_HOST: 0.0.0.0
+    V12_SLICK_URL: "jdbc:mysql://vortex-mariadb:3306/vortex?cachePrepStmts=true&cacheCallableStmts=true&cacheServerConfiguration=true&useLocalSessionState=true&elideSetAutoCommits=true&alwaysSendSetIsolation=false&enableQueryTimeouts=false&connectionAttributes=none&verifyServerCertificate=false&useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&useLegacyDatetimeCode=false&serverTimezone=UTC&rewriteBatchedStatements=true"
+    V12_SLICK_USER: root
+    V12_REDISRW_HOSTNAME: vortex-redis-master.vortex.svc.cluster.local
+    V12_REDISRW_PORT: 6379
+    V12_CLUSTER_PORT: 2552
+    V12_CLUSTER_ROLE: seed
+    V12_MANAGEMENT_HTTP_PORT: 8558
+    V12_JDBC_URL: "jdbc:mysql://vortex-mariadb:3306/vortex"
+    V12_JDBC_USERNAME: root
+    V12_JDBC_DRIVER: com.mysql.cj.jdbc.Driver
+    V12_JDBC_CACHE_INITIALSIZE: 2
+    V12_JDBC_CACHE_MAXACTIVE: -1
+    V12_JDBC_CACHE_MAXIDLE: 2
+    V12_JDBC_CACHE_MAXWAIT: 10000
+    V12_JDBC_CACHE_TESTONBORROW: true
+    V12_JDBC_CACHE_VALIDATIONQUERY: "select 1"
+    V12_JDBC_CACHE_CONNECTION: "[autoReconnect=true;useUnicode=true;useJDBCCompliantTimezoneShift=true;useLegacyDat"
+    V12_REDIS_CACHE_SSL: false
+    # cluster nodes
+    # V12_CLUSTER_NODES_0: akka://V12System@vortex-engine-0.vortex-engine-headless.vortex.svc.cluster.local:2552
+    # V12_CLUSTER_NODES_1: akka://V12System@vortex-engine-1.vortex-engine-headless.vortex.svc.cluster.local:2552
+    # V12_CLUSTER_NODES_2: akka://V12System@vortex-engine-2.vortex-engine-headless.vortex.svc.cluster.local:2552
+    V12_LOGLEVEL: INFO
+
+mariadb:
+  enabled: true
+  # auth:
+  #   existingSecret: mysql
+  #   database: vortex
+
+redis:
+  enabled: true  
+  # auth:
+  #   existingSecret: redis
+  #   existingSecretPasswordKey: password
+  #   enabled: true
+
+gateway:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: vortexio.azurecr.io/vortex/webapp
+    tag: prod
+    pullPolicy: Always
+  service:
+    port: 8000
+  env:
+    VIRTUAL_HOST: "gateway.local,*.gateway.local,gateway2.local"
+    VIRTUAL_PORT: 8000
+    APP: gateway
+    # DATABASE_URL: mysql://root:MglSlVOg4Z@vortex-mariadb:3306/vortex
+
+gatewayWebSocket:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: vortexio.azurecr.io/vortex/webapp
+    tag: prod
+    pullPolicy: Always
+  service:
+    port: 8000
+  env:
+    VIRTUAL_HOST: gateway_websocket.local
+    VIRTUAL_PORT: 8000
+    APP: gateway_websocket
+    DATABASE_URL: mysql://root:MglSlVOg4Z@vortex-mariadb:3306/vortex
+
+portal:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: vortexio.azurecr.io/vortex/webapp
+    tag: prod
+    pullPolicy: Always
+  service:
+    port: 8000
+  env:
+    VIRTUAL_HOST: portal.local
+    VIRTUAL_PORT: 8000
+    APP: portal
+    DATABASE_URL: mysql://root:MglSlVOg4Z@vortex-mariadb:3306/vortex
+
+workspace:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: vortexio.azurecr.io/vortex/webapp
+    tag: prod
+    pullPolicy: Always
+  service:
+    port: 8000
+  env:
+    APP: workspace
+    ENV: desa
+    USE_DATASTORE: local
+    DATABASE_URL: mysql://root:MglSlVOg4Z@vortex-mariadb:3306/vortex
+    REDIS_KEY: "MglSlVOg4Z"
+    REDIS_HOST: vortex-redis-master.vortex.svc.cluster.local
+    DEBUG: False
+    DOMAIN_ENGINE_WORKSPACE: vortex-engine:8080   
+    DOMAIN_ENGINE_PORTAL: vortex-engine:8080
+    DOMAIN_ENGINE_GATEWAY: vortex-engine:8080
+
+scheduler:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: vortexio.azurecr.io/vortex/webapp
+    tag: prod
+    pullPolicy: Always
+  service:
+    port: 8000
+  env:
+    APP: scheduler
+    WORKER: scheduler
+    DATABASE_URL: mysql://root:MglSlVOg4Z@vortex-mariadb:3306/vortex
+    REDIS_HOST: vortex-redis-master.vortex.svc.cluster.local
+    REDIS_PORT: 6379
+    REDIS_DB: 0
+    REDIS_SCHEMA: redis
+    # REDIS_KEY: "MglSlVOg4Z"
+
+admin:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: vortexio.azurecr.io/vortex/webapp
+    tag: prod
+    pullPolicy: Always
+  service:
+    port: 8000
+  env:
+    VIRTUAL_HOST: admin.local
+    VIRTUAL_PORT: 8000
+    APP: django_admin
+    # DATABASE_URL: mysql://root:MglSlVOg4Z@vortex-mariadb:3306/vortex
+
+worker:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: vortexio.azurecr.io/vortex/webapp
+    tag: prod
+    pullPolicy: Always
+  env:
+    APP: rq
+    WORKER: rq
+    SEARCH_INDEX: http://opensearch-cluster-master:9200
+    SEARCH_INDEX_INDEX: resources
+    ELASTIC_SEARCH_HOST_ANALYTICS: http://opensearch-cluster-master:9200
+    ELASTIC_SEARCH_INDEX_AUDIT: vortexapimethodaudittesting
+    ELASTIC_SEARCH_INDEX_HITS: vortexapimethodhitstesting
+    REDIS_HOST: vortex-redis-master.vortex.svc.cluster.local
+    REDIS_PORT: 6379
+    REDIS_DB: 0
+    # REDIS_KEY: "MglSlVOg4Z"
+    REDIS_STATS_TTL: 600
+    REDIS_DB_DATASOURCES: 7
+    REDIS_SOCKET_TIMEOUT: 15
+    REDIS_PREFERENCES_TTL: 600
+
+workerAudit:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: vortexio.azurecr.io/vortex/webapp
+    tag: prod
+    pullPolicy: Always
+  env:
+    APP: audit
+    WORKER: audit
+    SEARCH_INDEX: http://opensearch-cluster-master:9200
+    SEARCH_INDEX_INDEX: resources
+    ELASTIC_SEARCH_HOST_ANALYTICS: http://opensearch-cluster-master:9200
+    ELASTIC_SEARCH_INDEX_AUDIT: vortexapimethodaudittesting
+    ELASTIC_SEARCH_INDEX_HITS: vortexapimethodhitstesting
+    REDIS_HOST: vortex-redis-master.vortex.svc.cluster.local
+    REDIS_PORT: 6379
+    REDIS_DB: 0
+    REDIS_STATS_TTL: 600
+    REDIS_DB_DATASOURCES: 7
+    REDIS_SOCKET_TIMEOUT: 15
+    REDIS_PREFERENCES_TTL: 600
+    REDIS_KEY: "default:MglSlVOg4Z"
+    AUDIT_CLEAN_TTL: 30
+    AUDIT_DATABASE: http://opensearch-cluster-master:9200
+    AUDIT_BACKEND_HOST: vortex-rabbitmq
+    AUDIT_BACKEND_PORT: 5672
+    AUDIT_BACKEND_USER: user
+    AUDIT_BACKEND_PASS: MglSlVOg4Z
+    AUDIT_DATASET_QUEUE: datasets.audit
+    AUDIT_DATASET_INDEX: datasets-audit
+
+opensearch:
+  enabled: true
+  adminUser: admin
+  createSecret: true
+  envFrom:
+    - secretRef:
+        name: opensearch-secret
+  extraEnvs:
+    - name: DISABLE_INSTALL_DEMO_CONFIG
+      value: "true"
+    - name: DISABLE_SECURITY_PLUGIN
+      value: "true"
+  extraInitContainers:
+    - name: set-sysctl
+      image: busybox
+      command: ["sysctl", "-w", "vm.max_map_count=262144"]
+      securityContext:
+        privileged: true
+        runAsUser: 0
+
+rabbitmq:
+  enabled: true
+  auth:
+    password: MglSlVOg4Z
+
+traefik:
+  enabled: true
+  service:
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-resource-group: "vortex-k8s-prod-rgd9a492f6"
+      service.beta.kubernetes.io/azure-pip-name: "vortex-k8s-prod-lbipb022d625"
+    spec:
+      type: LoadBalancer
+      externalTrafficPolicy: Local
+
+ingressRoutes:
+  enabled: true
+  services:
+    - name: vortex-workspace
+      kind: Service
+      port: 8000
+      routes:
+        - match: Host(`workspace.k8s.vor-tex.io`)
+        - match: Host(`workspace-a.k8s.vor-tex.io`) && PathPrefix('/demo')
+
+artifactRegistry:
+  enabled: true
+  server: "vortexio.azurecr.io"
+  username: "deploy"
+  password: "4YrZewCssecDWKFA/2thFIPWo5Tfjsjt4nKz2kYGBL4A+ACRA6O1mo"
+
+vault:
+  enabled: true
+
+externalSecrets:
+  enabled: true
+
+laststeps: true
