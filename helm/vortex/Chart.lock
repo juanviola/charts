@@ -17,5 +17,8 @@ dependencies:
 - name: vault
   repository: https://helm.releases.hashicorp.com
   version: 0.30.0
-digest: sha256:b9dcf69e3a3e96fc565ec41355f0982d7893f4c5e8faf71bbd7eb4dc1623d923
-generated: "2025-06-30T09:26:17.780767-03:00"
+- name: external-secrets
+  repository: https://charts.external-secrets.io
+  version: 0.18.2
+digest: sha256:77fd8ac914b8b4771223c33787664a9ec34d2f2f1ef797cce5d82d372ebe8831
+generated: "2025-07-16T09:31:24.085313-03:00"

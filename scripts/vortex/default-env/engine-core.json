@@ -1,0 +1,16 @@
+{
+  "JAVA_XMS":" 512m",
+  "JAVA_XMX":" 2g",
+  "JAVA_XSS":" 1g",
+  "JAVA_PARALLELGCTHREADS":" 2",
+  "JAVA_CONCGCTHREADS":" 2",
+  "JAVA_IHOP":" 60",
+  "JAVA_MAXDIRECTMEMORYSIZE":" 2048m",
+  "JAVA_LOGGC":" /var/log/v12/garbage.log",
+  "JAVA_LOG":" CONSOLE",
+  "JAVA_ENV":" DESA",
+  "JAVA_AMQP":" false",
+  "JAVA_JAR":" v12-develop.jar",
+  "JAVA_STORAGE":" S3",
+  "JAVA_HTTP_SERVER_HOST": "0.0.0.0"
+}

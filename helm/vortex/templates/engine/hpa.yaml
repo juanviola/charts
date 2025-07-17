@@ -1,4 +1,4 @@
-{{- if .Values.engine.autoscaling.enabled }}
+{{- if and .Values.engine.enabled .Values.engine.autoscaling.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -8,7 +8,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Deployment
+    kind: StatefulSet
     name: {{ include "vortex.fullname" . }}-engine
   minReplicas: {{ .Values.engine.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.engine.autoscaling.maxReplicas }}

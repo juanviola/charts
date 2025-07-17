@@ -1,0 +1,5 @@
+{
+  "APP": "gateway",
+  "VIRTUAL_HOST": "gateway.local,*.gateway.local,gateway2.local",
+  "VIRTUAL_PORT": 8000
+}

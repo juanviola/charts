@@ -29,3 +29,7 @@ dependencies:
     version: 0.30.0
     repository: https://helm.releases.hashicorp.com
     condition: vault.enabled
+  - name: external-secrets
+    version: 0.18.2
+    repository: https://charts.external-secrets.io
+    condition: externalSecrets.enabled

@@ -46,8 +46,13 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if .Values.worker.env }}
           env:
+            - name: REDIS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: redis
+                  key: password
+          {{- if .Values.worker.env }}
             {{- range $key, $value := .Values.worker.env }}
             - name: {{ $key | quote }}
               value: {{ $value | quote }}

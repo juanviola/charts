@@ -1,0 +1,20 @@
+{{- if and .Values.laststeps .Values.externalSecrets.enabled }}
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: engine-core
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "60"
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: vault-backend
+  target:
+    name: engine-core
+    creationPolicy: Owner
+  dataFrom:
+  - extract:
+      key: engine/core
+{{- end }}

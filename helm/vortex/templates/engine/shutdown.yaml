@@ -1,3 +1,4 @@
+{{- if .Values.engine.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -18,3 +19,4 @@ data:
 
     echo "--------------------------------"
     echo $RESPONSE
+{{- end }}

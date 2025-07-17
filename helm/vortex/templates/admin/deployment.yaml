@@ -57,9 +57,14 @@ spec:
           {{- with .Values.admin.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- if .Values.admin.env }}
+          {{- end }}        
           env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: mariadburl
+                  key: url
+          {{- if .Values.admin.env }}
             {{- range $key, $value := .Values.admin.env }}
             - name: {{ $key | quote }}
               value: {{ $value | quote }}

@@ -45,14 +45,20 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+ingressRoutes:
+  enabled: false
 
+artifactRegistry:
+  enabled: false
 
 #----------------------------------------------------
 # Engine Component
 #----------------------------------------------------
 engine:
-  enabled: true
-  replicaCount: 1
+  enabled: false
+  replicaCount: 3
+  actorsystem: "V12System"
+  terminationGracePeriodSeconds: 300 # how many seconds to wait for the pod to terminate
   image:
     repository: vortexio.azurecr.io/vortex/engine
     tag: develop
@@ -72,9 +78,23 @@ engine:
         port: 2552
         targetPort: 2552
 
+
   env:
+    JAVA_XMS: 512m
+    JAVA_XMX: 2g
+    JAVA_XSS: 1g
+    JAVA_PARALLELGCTHREADS: 2
+    JAVA_CONCGCTHREADS: 2
+    JAVA_IHOP: 60
+    JAVA_MAXDIRECTMEMORYSIZE: 2048m
+    JAVA_LOGGC: /var/log/v12/garbage.log
+    JAVA_LOG: CONSOLE
+    JAVA_ENV: DESA
+    JAVA_AMQP: false
+    JAVA_JAR: v12-develop.jar
+    JAVA_STORAGE: S3
+    JAVA_HTTP_SERVER_HOST: "0.0.0.0"
     V12_HTTP_SERVER_HOST: localhost
-    V12_CLUSTER_HOST: localhost
     V12_SLICK_URL: "jdbc:mysql://<HOST>:3306/<DB>?cachePrepStmts=true&cacheCallableStmts=true&cacheServerConfiguration=true&useLocalSessionState=true&elideSetAutoCommits=true&alwaysSendSetIsolation=false&enableQueryTimeouts=false&connectionAttributes=none&verifyServerCertificate=false&useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&useLegacyDatetimeCode=false&serverTimezone=UTC&rewriteBatchedStatements=true"
     V12_SLICK_USER: root
     V12_SLICK_PASSWORD: mypass
@@ -82,15 +102,7 @@ engine:
     V12_REDISRW_PORT: 6379
     V12_CLUSTER_PORT: 2552
     V12_CLUSTER_ROLE: seed
-    # V12_CLUSTER_HOST: engine-1
-    # V12_CLUSTER_NODES_0: "akka://V12System@engine-1:2552"
-    # V12_CLUSTER_NODES_1: "akka://V12System@engine-2:2552"
-    # V12_CLUSTER_NODES_2: "akka://V12System@engine-3:2552"
-    #V12_REDIS_CACHE_SSL: false
-    #V12_REDIS_CACHE_PASSWORD: 
-    #V12_REDIS_CACHE_USERNAME: 
-    #V12_REDISRW_HOSTNAME: 
-    #V12_REDISRW_PORT: 6380
+
 
   securityContext: {}
     # capabilities:
@@ -151,11 +163,11 @@ engine:
 
   # Enable HPA
   autoscaling:
-    enabled: false
+    enabled: true
     minReplicas: 1
-    maxReplicas: 100
+    maxReplicas: 5
     targetCPUUtilizationPercentage: 80
-    # targetMemoryUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
 
   applicationConf: |
     akka {
@@ -317,7 +329,12 @@ engine:
         artery {
           enabled = on
           transport = tcp
-          canonical.port = 2552
+
+          canonical.port = "2552"
+          canonical.hostname = "${POD_IP}"
+          bind.hostname = "0.0.0.0"
+          bind.port = 2552
+
           advanced {
             maximum-frame-size = 128MiB
             maximum-large-frame-size = 256MiB
@@ -538,32 +555,67 @@ admin:
 #----------------------------------------------------
 # Rabbitmq Component
 #----------------------------------------------------
-rabbit:
+rabbitmq:
   enabled: false
-  image: rabbitmq:3-management 
+
 
 #----------------------------------------------------
 # Cache Component
 #----------------------------------------------------
 redis:
   enabled: false
-
+  auth:
+    existingSecret: redis
+    existingSecretPasswordKey: password
+    enabled: true
 #----------------------------------------------------
 # MySQL Component
 #----------------------------------------------------
 mariadb:
   enabled: false
-
+  auth:
+    existingSecret: mysql
+    database: vortex
 #----------------------------------------------------
 # Elasticsearch Component
 #----------------------------------------------------
-elasticsearch:
+opensearch:
   enabled: false
   image:
-    tag: 7.10.2
-
+    tag: 3.0.0
+  adminUser: admin
+  createSecret: true
+  envFrom:
+    - secretRef:
+        name: opensearch-secret
+  extraEnvs:
+    - name: DISABLE_INSTALL_DEMO_CONFIG
+      value: "true"
+    - name: DISABLE_SECURITY_PLUGIN
+      value: "true"
+  extraInitContainers:
+    - name: set-sysctl
+      image: busybox
+      command: ["sysctl", "-w", "vm.max_map_count=262144"]
+      securityContext:
+        privileged: true
+        runAsUser: 0
 #----------------------------------------------------
 # Vault Component
 #----------------------------------------------------
 vault:
   enabled: false
+
+#----------------------------------------------------
+# External Secrets
+#----------------------------------------------------
+externalSecrets:
+  enabled: false
+
+#----------------------------------------------------
+# Traefik
+#----------------------------------------------------
+traefik:
+  enabled: false
+
+laststeps: false

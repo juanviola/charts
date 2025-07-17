@@ -45,9 +45,14 @@ spec:
           {{- with .Values.scheduler.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- if .Values.scheduler.env }}
+          {{- end }}        
           env:
+            - name: REDIS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: redis
+                  key: password
+          {{- if .Values.scheduler.env }}
             {{- range $key, $value := .Values.scheduler.env }}
             - name: {{ $key | quote }}
               value: {{ $value | quote }}

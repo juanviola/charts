@@ -7,7 +7,6 @@ metadata:
     {{- include "vortex.labels" . | nindent 4 }}
     {{- include "vortex.engine.labels" . | nindent 4 }}
 spec:
-  terminationGracePeriodSeconds: 3600
   serviceName: {{ include "vortex.fullname" . }}-engine-headless
   {{- if not .Values.engine.autoscaling.enabled }}
   replicas: {{ .Values.engine.replicaCount }}
@@ -29,6 +28,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      terminationGracePeriodSeconds: {{ .Values.engine.terminationGracePeriodSeconds | default 300 }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -42,6 +42,37 @@ spec:
             {{- toYaml .Values.engine.securityContext | nindent 12 }}
           image: "{{ .Values.engine.image.repository }}:{{ .Values.engine.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.engine.image.pullPolicy }}
+          command:
+            - java
+            - -Xms$(JAVA_XMS)
+            - -Xmx$(JAVA_XMX)
+            - -Xss$(JAVA_XSS)
+            - -XX:+UseG1GC
+            - -XX:+DisableAttachMechanism
+            - -XX:ParallelGCThreads=$(JAVA_PARALLELGCTHREADS)
+            - -XX:ConcGCThreads=$(JAVA_CONCGCTHREADS)
+            - -XX:InitiatingHeapOccupancyPercent=$(JAVA_IHOP)
+            - -XX:MaxGCPauseMillis=30
+            - -XX:GCPauseIntervalMillis=300
+            - -XX:G1HeapRegionSize=32m
+            - -XX:MetaspaceSize=1024m
+            - -XX:MaxDirectMemorySize=$(JAVA_MAXDIRECTMEMORYSIZE)
+            - -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses
+            - -XX:+UseStringDeduplication
+            - -Dstorage=$(JAVA_STORAGE)
+            - -Dlog2=$(JAVA_LOG)
+            {{- $ctx := . }}
+            {{- range $i := until (int $ctx.Values.engine.replicaCount) }}
+            - -Dakka.cluster.seed-nodes.{{$i}}=akka://{{ $ctx.Values.engine.actorsystem }}@vortex-engine-{{$i}}.{{ include "vortex.fullname" $ctx }}-engine-headless.{{ $ctx.Release.Namespace }}.svc.cluster.local:2552
+            {{- end }}
+            - -Dakka.remote.artery.canonical.hostname=$(POD_IP)
+            - -Dakka.remote.artery.bind.port=2552
+            - -Damqp=$(JAVA_AMQP)
+            - -cp
+            - "$(JAVA_JAR):libs/*:conf"
+            - io.vortex.akka.Main
+            - "$(JAVA_HTTP_SERVER_HOST)"
+            - "8080"
           ports:
           {{- range .Values.engine.service.ports }}
             - name: {{ .name }}
@@ -50,7 +81,24 @@ spec:
               protocol: {{ .protocol }}
               {{- end }}
           {{- end }}
+          envFrom:
+            - secretRef:
+                name: engine-core
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: V12_JDBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: rootPassword
+            - name: V12_REDIS_CACHE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis
+                  key: password
             - name: POD_NAME
               valueFrom:
                 fieldRef:
