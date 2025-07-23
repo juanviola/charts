@@ -2,6 +2,7 @@
 
 # Script to clean up Vortex namespace after a failed installation
 # This script removes all resources that might be left behind
+#
 
 set -e
 
